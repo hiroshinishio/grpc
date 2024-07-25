@@ -21,6 +21,7 @@
 
 #include <functional>
 
+#include "base/context.h"
 #include "absl/log/absl_check.h"
 
 #include <grpc/grpc.h>
@@ -31,6 +32,9 @@
 #include <grpcpp/impl/completion_queue_tag.h>
 #include <grpcpp/support/config.h>
 #include <grpcpp/support/status.h>
+
+#include "src/core/lib/surface/call.h"
+
 
 namespace grpc {
 namespace internal {
@@ -127,6 +131,8 @@ class CallbackWithStatusTag : public grpc_completion_queue_functor {
     auto status = std::move(status_);
     func_ = nullptr;     // reset to clear this out for sure
     status_ = Status();  // reset to clear this out for sure
+    base::WithContext with_context(
+        *grpc_call_get_arena(call_)->GetContext<base::Context>());
     CatchingCallback(std::move(func), std::move(status));
     grpc_call_unref(call_);
   }
@@ -214,6 +220,8 @@ class CallbackWithSuccessTag : public grpc_completion_queue_functor {
 #endif
 
     if (do_callback) {
+      base::WithContext with_context(
+          *grpc_call_get_arena(call_)->GetContext<base::Context>());
       CatchingCallback(func_, ok);
     }
   }

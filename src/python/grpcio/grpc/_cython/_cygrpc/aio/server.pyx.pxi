@@ -454,7 +454,6 @@ async def _finish_handler_with_unary_response(RPCState rpc_state,
     rpc_state.metadata_sent = True
     rpc_state.status_sent = True
     await execute_batch(rpc_state, finish_ops, loop)
-    uninstall_context()
 
 
 async def _finish_handler_with_stream_responses(RPCState rpc_state,
@@ -524,7 +523,6 @@ async def _finish_handler_with_stream_responses(RPCState rpc_state,
     rpc_state.metadata_sent = True
     rpc_state.status_sent = True
     await execute_batch(rpc_state, finish_ops, loop)
-    uninstall_context()
 
 
 async def _handle_unary_unary_rpc(object method_handler,

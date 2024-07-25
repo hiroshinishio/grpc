@@ -35,6 +35,7 @@
 #include <grpc/event_engine/memory_allocator.h>
 #include <grpc/support/port_platform.h>
 
+#include "base/context.h"
 #include "src/core/lib/gprpp/construct_destruct.h"
 #include "src/core/lib/promise/context.h"
 #include "src/core/lib/resource_quota/memory_quota.h"
@@ -46,6 +47,11 @@ class Arena;
 
 template <typename T>
 struct ArenaContextType;
+
+template <>
+struct ArenaContextType<base::Context> {
+  static void Destroy(base::Context* p) { delete p; }
+};
 
 namespace arena_detail {
 
